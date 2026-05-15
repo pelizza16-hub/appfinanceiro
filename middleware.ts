@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 const protectedRoutes = ["/dashboard", "/transactions"];
 const authRoutes = ["/login", "/signup"];
@@ -15,31 +15,36 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
+        setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[2])
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            supabaseResponse.cookies.set(name, value, options as any);
+          });
         },
       },
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
+    const pathname = request.nextUrl.pathname;
 
-  if (!user && protectedRoutes.some((r) => pathname.startsWith(r))) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+    if (!user && protectedRoutes.some((r) => pathname.startsWith(r))) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-  if (user && authRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    if (user && authRoutes.includes(pathname)) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  } catch {
+    // Em caso de erro (rede, env inválida), permite o request prosseguir
+    // O layout autenticado fará o redirect se necessário
   }
 
   return supabaseResponse;
