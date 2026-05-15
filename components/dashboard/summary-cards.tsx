@@ -17,10 +17,10 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Receitas
           </CardTitle>
-          <TrendingUp className="h-4 w-4 text-green-500" />
+          <TrendingUp className="h-4 w-4 text-green-500 dark:text-green-400" />
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold text-green-500">
+          <p className="text-2xl font-bold text-green-500 dark:text-green-400">
             {formatCurrency(income)}
           </p>
         </CardContent>
@@ -31,10 +31,10 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Despesas
           </CardTitle>
-          <TrendingDown className="h-4 w-4 text-red-500" />
+          <TrendingDown className="h-4 w-4 text-red-500 dark:text-red-400" />
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold text-red-500">
+          <p className="text-2xl font-bold text-red-500 dark:text-red-400">
             {formatCurrency(expense)}
           </p>
         </CardContent>
@@ -50,7 +50,7 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
         <CardContent>
           <p
             className={`text-2xl font-bold ${
-              balance >= 0 ? "text-primary" : "text-red-500"
+              balance >= 0 ? "text-primary" : "text-red-500 dark:text-red-400"
             }`}
           >
             {formatCurrency(balance)}

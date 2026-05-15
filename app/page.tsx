@@ -61,8 +61,8 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col items-center gap-3 rounded-lg border p-6 text-center">
-            <div className="rounded-full bg-green-500/10 p-3">
-              <TrendingUp className="h-6 w-6 text-green-500" />
+            <div className="rounded-full bg-green-500/10 dark:bg-green-500/20 p-3">
+              <TrendingUp className="h-6 w-6 text-green-500 dark:text-green-400" />
             </div>
             <h3 className="font-semibold">Categorias e Filtros</h3>
             <p className="text-sm text-muted-foreground">
@@ -72,8 +72,8 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-col items-center gap-3 rounded-lg border p-6 text-center">
-            <div className="rounded-full bg-blue-500/10 p-3">
-              <ShieldCheck className="h-6 w-6 text-blue-500" />
+            <div className="rounded-full bg-blue-500/10 dark:bg-blue-500/20 p-3">
+              <ShieldCheck className="h-6 w-6 text-blue-500 dark:text-blue-400" />
             </div>
             <h3 className="font-semibold">Seus dados, só seus</h3>
             <p className="text-sm text-muted-foreground">
