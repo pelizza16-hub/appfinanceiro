@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import type { Transaction } from "@/types";
 
-const COLORS = [
+const EXPENSE_COLORS = [
   "#3b82f6",
   "#ef4444",
   "#22c55e",
@@ -24,14 +24,30 @@ const COLORS = [
   "#6366f1",
 ];
 
+const INCOME_COLORS = [
+  "#22c55e",
+  "#16a34a",
+  "#4ade80",
+  "#86efac",
+  "#14b8a6",
+  "#2dd4bf",
+  "#34d399",
+  "#6ee7b7",
+  "#a7f3d0",
+];
+
 interface CategoryPieChartProps {
   transactions: Transaction[];
+  type: "income" | "expense";
 }
 
-export function CategoryPieChart({ transactions }: CategoryPieChartProps) {
-  const expenses = transactions.filter((t) => t.type === "expense");
+export function CategoryPieChart({ transactions, type }: CategoryPieChartProps) {
+  const filtered = transactions.filter((t) => t.type === type);
+  const COLORS = type === "expense" ? EXPENSE_COLORS : INCOME_COLORS;
+  const title = type === "expense" ? "Despesas por Categoria" : "Receitas por Categoria";
+  const emptyMessage = type === "expense" ? "Nenhuma despesa no período" : "Nenhuma receita no período";
 
-  const byCategory = expenses.reduce<Record<string, number>>((acc, t) => {
+  const byCategory = filtered.reduce<Record<string, number>>((acc, t) => {
     acc[t.category] = (acc[t.category] ?? 0) + Number(t.amount);
     return acc;
   }, {});
@@ -44,12 +60,10 @@ export function CategoryPieChart({ transactions }: CategoryPieChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Despesas por Categoria</CardTitle>
+          <CardTitle className="text-base">{title}</CardTitle>
         </CardHeader>
         <CardContent className="flex h-48 items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            Nenhuma despesa no período
-          </p>
+          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         </CardContent>
       </Card>
     );
@@ -58,7 +72,7 @@ export function CategoryPieChart({ transactions }: CategoryPieChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Despesas por Categoria</CardTitle>
+        <CardTitle className="text-base">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={280}>

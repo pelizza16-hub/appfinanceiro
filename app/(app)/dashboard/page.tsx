@@ -50,7 +50,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <SummaryCards income={income} expense={expense} />
 
-      <CategoryPieChart transactions={txList} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <CategoryPieChart transactions={txList} type="expense" />
+        <CategoryPieChart transactions={txList} type="income" />
+      </div>
     </div>
   );
 }
