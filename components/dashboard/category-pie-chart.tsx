@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useTheme } from "next-themes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import type { Transaction } from "@/types";
@@ -36,12 +37,43 @@ const INCOME_COLORS = [
   "#a7f3d0",
 ];
 
+interface TooltipPayload {
+  name: string;
+  value: number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  isDark: boolean;
+}
+
+function CustomTooltip({ active, payload, isDark }: CustomTooltipProps) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: isDark ? "#1e293b" : "#ffffff",
+        border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+        borderRadius: "8px",
+        padding: "8px 12px",
+        color: isDark ? "#f1f5f9" : "#0f172a",
+        fontSize: "13px",
+      }}
+    >
+      <p>{`${payload[0].name}: ${formatCurrency(payload[0].value)}`}</p>
+    </div>
+  );
+}
+
 interface CategoryPieChartProps {
   transactions: Transaction[];
   type: "income" | "expense";
 }
 
 export function CategoryPieChart({ transactions, type }: CategoryPieChartProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const filtered = transactions.filter((t) => t.type === type);
   const COLORS = type === "expense" ? EXPENSE_COLORS : INCOME_COLORS;
   const title = type === "expense" ? "Despesas por Categoria" : "Receitas por Categoria";
@@ -94,15 +126,7 @@ export function CategoryPieChart({ transactions, type }: CategoryPieChartProps) 
                 />
               ))}
             </Pie>
-            <Tooltip
-              formatter={(value: number) => formatCurrency(value)}
-              contentStyle={{
-                borderRadius: "8px",
-                border: "1px solid hsl(var(--border))",
-                background: "hsl(var(--card))",
-                color: "hsl(var(--card-foreground))",
-              }}
-            />
+            <Tooltip content={<CustomTooltip isDark={isDark} />} />
             <Legend
               formatter={(value) => (
                 <span className="text-xs text-muted-foreground">{value}</span>
