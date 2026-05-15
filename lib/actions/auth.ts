@@ -19,12 +19,17 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
-    email: formData.get("email") as string,
+  const email = formData.get("email") as string;
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
     password: formData.get("password") as string,
   });
 
   if (error) return { error: error.message };
+
+  // session null = Supabase exige confirmação de e-mail
+  if (!data.session) return { pendingConfirmation: true, email };
 
   redirect("/dashboard");
 }

@@ -12,7 +12,7 @@ export default function LandingPage() {
           <span className="font-bold text-lg">FinançasPessoais</span>
         </div>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          <ThemeToggle showLabel />
           <Button variant="ghost" asChild>
             <Link href="/login">Entrar</Link>
           </Button>

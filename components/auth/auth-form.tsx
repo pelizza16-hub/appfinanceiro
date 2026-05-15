@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { TrendingUp, Eye, EyeOff } from "lucide-react";
+import { TrendingUp, Eye, EyeOff, MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   const isLogin = mode === "login";
 
@@ -24,7 +25,42 @@ export function AuthForm({ mode }: AuthFormProps) {
     startTransition(async () => {
       const result = isLogin ? await login(formData) : await signup(formData);
       if (result?.error) setError(result.error);
+      if (result && "pendingConfirmation" in result && result.pendingConfirmation) {
+        setPendingEmail(result.email);
+      }
     });
+  }
+
+  if (pendingEmail) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4">
+        <div className="w-full max-w-sm space-y-6 text-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="rounded-full bg-primary/10 p-4">
+              <MailCheck className="h-10 w-10 text-primary" />
+            </div>
+            <h1 className="text-2xl font-semibold">Confirme seu e-mail</h1>
+            <p className="text-muted-foreground">
+              Enviamos um link de confirmação para
+            </p>
+            <p className="font-medium text-foreground break-all">{pendingEmail}</p>
+            <p className="text-sm text-muted-foreground">
+              Clique no link que enviamos para ativar sua conta. Verifique também
+              a pasta de <span className="font-medium">spam ou lixo eletrônico</span> caso
+              não encontre o e-mail.
+            </p>
+          </div>
+
+          <div className="rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            Após confirmar, volte aqui e faça login normalmente.
+          </div>
+
+          <Button variant="outline" className="w-full" asChild>
+            <Link href="/login">Ir para o login</Link>
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
