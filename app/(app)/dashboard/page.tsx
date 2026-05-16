@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
-import { CategoryPieChart } from "@/components/dashboard/category-pie-chart";
+import { CategoryPieChart, IncomeExpenseChart } from "@/components/dashboard/category-pie-chart";
 import { PeriodFilter } from "@/components/dashboard/period-filter";
 import type { Transaction } from "@/types";
 
@@ -42,13 +42,15 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Visão Geral</h1>
         <Suspense>
           <PeriodFilter />
         </Suspense>
       </div>
 
       <SummaryCards income={income} expense={expense} />
+
+      <IncomeExpenseChart income={income} expense={expense} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <CategoryPieChart transactions={txList} type="expense" />

@@ -15,8 +15,8 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/transactions", label: "Transações", icon: ArrowLeftRight },
+  { href: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
+  { href: "/transactions", label: "Lançamentos", icon: ArrowLeftRight },
 ];
 
 export function Header({ email }: { email: string }) {

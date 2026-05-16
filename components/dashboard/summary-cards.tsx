@@ -14,9 +14,10 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Total Receitas
-          </CardTitle>
+          <div>
+            <CardTitle className="text-base font-semibold">Recebi</CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5">Entradas do mês</p>
+          </div>
           <TrendingUp className="h-4 w-4 text-green-500 dark:text-green-400" />
         </CardHeader>
         <CardContent>
@@ -28,9 +29,10 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Total Despesas
-          </CardTitle>
+          <div>
+            <CardTitle className="text-base font-semibold">Gastei</CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5">Saídas do mês</p>
+          </div>
           <TrendingDown className="h-4 w-4 text-red-500 dark:text-red-400" />
         </CardHeader>
         <CardContent>
@@ -42,9 +44,10 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Saldo
-          </CardTitle>
+          <div>
+            <CardTitle className="text-base font-semibold">Saldo</CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5">Recebi menos gastei</p>
+          </div>
           <Wallet className="h-4 w-4 text-primary" />
         </CardHeader>
         <CardContent>

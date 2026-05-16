@@ -13,29 +13,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import type { Transaction } from "@/types";
 
-const EXPENSE_COLORS = [
-  "#3b82f6",
-  "#ef4444",
-  "#22c55e",
-  "#f59e0b",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
-  "#f97316",
-  "#6366f1",
-];
+// Cores fixas por categoria — Saúde usa teal para não conflitar com verde de receitas
+const CATEGORY_COLORS: Record<string, string> = {
+  Alimentação: "#f97316",
+  Transporte: "#3b82f6",
+  Moradia: "#8b5cf6",
+  Lazer: "#ec4899",
+  Saúde: "#14b8a6",
+  Educação: "#6366f1",
+  Salário: "#22c55e",
+  Freelance: "#16a34a",
+  Outros: "#64748b",
+};
+const FALLBACK_COLORS = ["#f59e0b", "#0ea5e9", "#d946ef", "#84cc16", "#e11d48"];
 
-const INCOME_COLORS = [
-  "#22c55e",
-  "#16a34a",
-  "#4ade80",
-  "#86efac",
-  "#14b8a6",
-  "#2dd4bf",
-  "#34d399",
-  "#6ee7b7",
-  "#a7f3d0",
-];
+function getCategoryColor(name: string, index: number): string {
+  return CATEGORY_COLORS[name] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length];
+}
 
 interface TooltipPayload {
   name: string;
@@ -66,6 +60,7 @@ function CustomTooltip({ active, payload, isDark }: CustomTooltipProps) {
   );
 }
 
+// Gráfico por categoria (despesas ou receitas)
 interface CategoryPieChartProps {
   transactions: Transaction[];
   type: "income" | "expense";
@@ -75,7 +70,6 @@ export function CategoryPieChart({ transactions, type }: CategoryPieChartProps) 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const filtered = transactions.filter((t) => t.type === type);
-  const COLORS = type === "expense" ? EXPENSE_COLORS : INCOME_COLORS;
   const title = type === "expense" ? "Despesas por Categoria" : "Receitas por Categoria";
   const emptyMessage = type === "expense" ? "Nenhuma despesa no período" : "Nenhuma receita no período";
 
@@ -118,10 +112,10 @@ export function CategoryPieChart({ transactions, type }: CategoryPieChartProps) 
               paddingAngle={2}
               dataKey="value"
             >
-              {data.map((_, index) => (
+              {data.map((entry, index) => (
                 <Cell
                   key={index}
-                  fill={COLORS[index % COLORS.length]}
+                  fill={getCategoryColor(entry.name, index)}
                   stroke="transparent"
                 />
               ))}
@@ -131,6 +125,104 @@ export function CategoryPieChart({ transactions, type }: CategoryPieChartProps) 
               formatter={(value) => (
                 <span className="text-xs text-muted-foreground">{value}</span>
               )}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Gráfico receitas vs despesas (visão geral do mês)
+interface IncomeExpenseChartProps {
+  income: number;
+  expense: number;
+}
+
+export function IncomeExpenseChart({ income, expense }: IncomeExpenseChartProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  const total = income + expense;
+
+  if (total === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Receitas vs Despesas</CardTitle>
+          <p className="text-xs text-muted-foreground">Quanto entrou e quanto saiu no mês</p>
+        </CardHeader>
+        <CardContent className="flex h-48 items-center justify-center">
+          <p className="text-sm text-muted-foreground">Nenhum lançamento no período</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const data = [
+    { name: "Receitas", value: income },
+    { name: "Despesas", value: expense },
+  ];
+
+  const COLORS = ["#22c55e", "#ef4444"];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Receitas vs Despesas</CardTitle>
+        <p className="text-xs text-muted-foreground">Quanto entrou e quanto saiu no mês</p>
+      </CardHeader>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={280}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={100}
+              paddingAngle={3}
+              dataKey="value"
+            >
+              {data.map((_, index) => (
+                <Cell key={index} fill={COLORS[index]} stroke="transparent" />
+              ))}
+            </Pie>
+            <Tooltip
+              content={({ active, payload }) => {
+                if (!active || !payload?.length) return null;
+                const item = payload[0];
+                const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : "0";
+                return (
+                  <div
+                    style={{
+                      background: isDark ? "#1e293b" : "#ffffff",
+                      border: `1px solid ${isDark ? "#334155" : "#e2e8f0"}`,
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      color: isDark ? "#f1f5f9" : "#0f172a",
+                      fontSize: "13px",
+                    }}
+                  >
+                    <p className="font-medium">{item.name}</p>
+                    <p>{formatCurrency(item.value)}</p>
+                    <p className="text-xs opacity-70">{pct}% do total</p>
+                  </div>
+                );
+              }}
+            />
+            <Legend
+              formatter={(value, entry) => {
+                const color = (entry as { color?: string }).color;
+                return (
+                  <span style={{ color: isDark ? "#94a3b8" : "#64748b", fontSize: "12px" }}>
+                    {value}{" "}
+                    <span style={{ color }}>
+                      {formatCurrency(data.find((d) => d.name === value)?.value ?? 0)}
+                    </span>
+                  </span>
+                );
+              }}
             />
           </PieChart>
         </ResponsiveContainer>
