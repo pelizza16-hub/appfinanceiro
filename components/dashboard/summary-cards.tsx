@@ -46,7 +46,7 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div>
             <CardTitle className="text-base font-semibold">Saldo</CardTitle>
-            <p className="text-xs text-muted-foreground mt-0.5">Recebi menos gastei</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Balanço do mês</p>
           </div>
           <Wallet className="h-4 w-4 text-primary" />
         </CardHeader>

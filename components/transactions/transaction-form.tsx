@@ -24,9 +24,10 @@ import { CATEGORIES, type Transaction } from "@/types";
 
 interface TransactionFormProps {
   transaction?: Transaction;
+  trigger?: React.ReactNode;
 }
 
-export function TransactionForm({ transaction }: TransactionFormProps) {
+export function TransactionForm({ transaction, trigger }: TransactionFormProps) {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<string>(transaction?.type ?? "expense");
   const [category, setCategory] = useState<string>(
@@ -69,21 +70,21 @@ export function TransactionForm({ transaction }: TransactionFormProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {isEditing ? (
+        {trigger ?? (isEditing ? (
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Pencil className="h-4 w-4" />
           </Button>
         ) : (
           <Button>
             <Plus className="h-4 w-4" />
-            Nova Transação
+            Novo Lançamento
           </Button>
-        )}
+        ))}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Editar Transação" : "Nova Transação"}
+            {isEditing ? "Editar Lançamento" : "Novo Lançamento"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
