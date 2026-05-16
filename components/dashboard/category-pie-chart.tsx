@@ -192,7 +192,7 @@ export function IncomeExpenseChart({ income, expense }: IncomeExpenseChartProps)
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const item = payload[0];
-                const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : "0";
+                const pct = total > 0 ? ((Number(item.value) / total) * 100).toFixed(1) : "0";
                 return (
                   <div
                     style={{
@@ -205,7 +205,7 @@ export function IncomeExpenseChart({ income, expense }: IncomeExpenseChartProps)
                     }}
                   >
                     <p className="font-medium">{item.name}</p>
-                    <p>{formatCurrency(item.value)}</p>
+                    <p>{formatCurrency(Number(item.value))}</p>
                     <p className="text-xs opacity-70">{pct}% do total</p>
                   </div>
                 );
